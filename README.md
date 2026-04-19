@@ -1,8 +1,8 @@
-# ⚡ Online Testing System — Upgraded Edition
+# ⚡ Online Testing System
 
 A modern, secure online exam platform for teachers and students.
 
-## 🚀 New Features (Upgraded)
+## 🚀 New Features
 
 ### For Teachers
 - **Shareable Test Links** — Every test gets a unique UUID link (e.g. `/test/abc-123/`). Copy and share with students.
@@ -17,7 +17,7 @@ A modern, secure online exam platform for teachers and students.
 - **Leaderboard After Test** — See your rank among all students who took the same test.
 - **History Page** — View all past test scores with grades.
 
-### Anti-Cheat System (Enhanced)
+### Anti-Cheat System
 | Feature | Action |
 |---|---|
 | Fullscreen enforced | Test cannot proceed without fullscreen |
