@@ -1,0 +1,74 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Results — Teacher Panel{% endblock %}
+
+{% block top %}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-5 pe-5">
+    <div class="fw-bold fs-3">Teacher Panel</div>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3"><a class="nav-link active text-white fs-5" href="{% url 'OTS:teacher_dashboard' %}">Dashboard</a></li>
+        <li class="nav-item me-3"><a class="nav-link active text-white fs-5" href="{% url 'OTS:Logout' %}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:1100px;">
+  <div class="card border-0 shadow-lg rounded-4" style="background:rgba(255,255,255,0.97);">
+    <div class="card-body p-4 p-md-5">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="fw-bold mb-0 text-dark">Results</h3>
+        <form method="get" class="d-flex gap-2 align-items-center">
+          <select name="test_id" class="form-select" style="min-width:320px;">
+            <option value="">All tests (latest)</option>
+            {% for t in tests %}
+              <option value="{{ t.id }}" {% if selected_test and selected_test.id == t.id %}selected{% endif %}>
+                {{ t.subject.name }} — {{ t.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-dark" type="submit">Filter</button>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+          <thead>
+            <tr>
+              <th class="text-start">Student</th>
+              <th>Test</th>
+              <th>Score</th>
+              <th>Correct</th>
+              <th>Wrong</th>
+              <th>Tab Switches</th>
+              <th>Date</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in results %}
+            <tr>
+              <td class="text-start fw-semibold">{{ r.username.name }}</td>
+              <td class="small text-muted">{% if r.test %}{{ r.test.name }}{% else %}—{% endif %}</td>
+              <td class="fw-bold">{{ r.points|floatformat:1 }}</td>
+              <td class="text-success fw-semibold">{{ r.right }}</td>
+              <td class="text-danger fw-semibold">{{ r.wrong }}</td>
+              <td>{% if r.tab_switches > 0 %}<span class="badge bg-warning text-dark">{{ r.tab_switches }}</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              <td class="small text-muted">{{ r.date }}</td>
+              <td class="small text-muted">{{ r.time|time:"H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-muted">No results found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

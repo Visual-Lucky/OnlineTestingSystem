@@ -1,0 +1,409 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %} OTS - Practice Questions {% endblock %}
+
+{% block top %}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" href="{% url 'OTS:home' %}">Home</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" href="{% url 'OTS:Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container home-page px-2 px-sm-3 py-3 py-md-4">
+  <form style="display:none;">{% csrf_token %}</form>
+
+  <p class="text-center text-dark fw-semibold lead mb-3">
+    Practice Test Mode — Timer and focus rules enabled
+  </p>
+
+  <!-- Step 1: Subject + Test picker -->
+  <div id="picker-section" class="card home-shell border-0 shadow-lg mx-auto mb-4">
+    <div class="card-header home-shell-header px-3 px-md-4 py-3">
+      <span class="fw-semibold">Choose a subject &amp; practice test</span>
+      <span class="small d-block opacity-90 mt-1">Select subject and start practice test</span>
+    </div>
+    <div class="card-body px-2 px-sm-3 px-md-4 py-3 py-md-4">
+
+      <div id="picker-message" class="alert alert-danger d-none mb-3" role="alert"></div>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-5">
+          <label class="form-label fw-semibold" style="color:rgb(30,76,99);">Subject</label>
+          <select id="subject-select" class="form-select form-select-lg rounded-3">
+            <option value="">Loading subjects…</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-5">
+          <label class="form-label fw-semibold" style="color:rgb(30,76,99);">Test</label>
+          <select id="test-select" class="form-select form-select-lg rounded-3" disabled>
+            <option value="">Select a subject first</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-2 d-flex align-items-end">
+          <button id="start-practice-btn" class="btn btn-lg w-100 fw-semibold rounded-3 shadow-sm"
+            style="background:rgb(30,76,99);color:#fff;" disabled>
+            Start Practice
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Practice paper (hidden initially) -->
+  <div id="practice-section" class="d-none">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <button id="btn-back-picker" type="button" class="btn btn-outline-light border-secondary text-dark btn-sm shadow-sm">
+        ← Back to subjects
+      </button>
+      <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
+        <span id="practice-test-name" class="badge rounded-pill px-3 py-2 fs-6"
+          style="background:rgba(255,255,255,0.9);color:rgb(30,76,99);">Practice Test</span>
+        <span id="practice-timer-badge" class="badge rounded-pill px-3 px-md-4 py-2 fs-6"
+          style="background:rgba(255,255,255,0.9);color:rgb(30,76,99);font-family:monospace;">Time: 10:00</span>
+      </div>
+    </div>
+
+    <div id="practice-loading" class="card test-loading-panel border-0 shadow mb-3">
+      <div class="card-body text-center py-5 px-3 px-md-4">
+        <div class="spinner-border mb-3" style="color:rgb(30,76,99);" role="status"></div>
+        <p class="mb-0 fw-semibold text-secondary">Loading questions…</p>
+      </div>
+    </div>
+
+    <div id="practice-error" class="alert alert-danger d-none shadow-sm mb-3" role="alert"></div>
+
+    <form id="practice-form" action="{% url 'OTS:calculateTest' %}" method="post" class="d-none">
+      {% csrf_token %}
+      <input type="hidden" name="test_id" id="practice-test-id" value="">
+      <input type="hidden" name="tab_switches" id="practice-tab-switches" value="0">
+      <input type="hidden" name="copy_attempts" value="0">
+      <input type="hidden" name="fullscreen_exits" value="0">
+      <div id="practice-questions-area"></div>
+      <div class="text-center mt-3 mb-4 px-2">
+        <button id="submit-practice-btn" type="button"
+                class="btn btn-dark btn-lg px-4 px-md-5 rounded-pill shadow-sm w-100 w-sm-auto">
+          Submit Practice and Check Result
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.practice-q-card { background:#fff !important; border-radius:0.85rem !important; box-shadow:0 2px 12px rgba(30,76,99,0.08) !important; margin-bottom:1.25rem; }
+.practice-option { cursor:pointer; transition:background .15s ease; border-left:3px solid transparent !important; }
+.practice-option:hover { background:rgba(30,76,99,0.06) !important; }
+
+@media (min-width: 576px) {
+  .w-sm-auto { width: auto !important; }
+}
+
+@media (max-width: 575px) {
+  #practice-test-name,
+  #practice-timer-badge {
+    font-size: 0.8rem !important;
+    padding: 0.3rem 0.7rem !important;
+  }
+
+  .practice-option {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.65rem !important;
+  }
+}
+</style>
+
+<script>
+(function () {
+  var subjectsUrl      = "{{ subjects_api_url|escapejs }}";
+  var testsUrlTemplate = "{{ tests_api_template|escapejs }}";
+  var apiQuestionsBase = "{{ practice_questions_template|escapejs }}";
+  var initialTestId = "{{ initial_test_id|escapejs }}";
+
+  var subjectSelect    = document.getElementById("subject-select");
+  var testSelect       = document.getElementById("test-select");
+  var startBtn         = document.getElementById("start-practice-btn");
+  var pickerSection    = document.getElementById("picker-section");
+  var practiceSection  = document.getElementById("practice-section");
+  var practiceLoading  = document.getElementById("practice-loading");
+  var practiceError    = document.getElementById("practice-error");
+  var practiceArea     = document.getElementById("practice-questions-area");
+  var pickerMsg        = document.getElementById("picker-message");
+  var btnBackPicker    = document.getElementById("btn-back-picker");
+  var btnSubmitPractice = document.getElementById("submit-practice-btn");
+  var timerBadge       = document.getElementById("practice-timer-badge");
+  var testNameBadge    = document.getElementById("practice-test-name");
+  var practiceForm     = document.getElementById("practice-form");
+  var practiceTestIdEl = document.getElementById("practice-test-id");
+  var tabSwitchesEl    = document.getElementById("practice-tab-switches");
+
+  var currentTestId = null;
+  var currentTestName = "Practice Test";
+  var timerInterval = null;
+  var secondsLeft = 600;
+  var submitted = false;
+  var tabSwitches = 0;
+  var maxTabSwitches = 3;
+  var homeUrl = "{% url 'OTS:home' %}";
+
+  function escapeHtml(str) {
+    if (str == null) return "";
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function showPickerMsg(msg) {
+    pickerMsg.textContent = msg;
+    pickerMsg.classList.remove("d-none");
+  }
+
+  function formatTime(secs) {
+    var m = Math.floor(secs / 60);
+    var s = secs % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function startTimer() {
+    stopTimer();
+    timerBadge.textContent = "Time: " + formatTime(secondsLeft);
+    timerInterval = setInterval(function(){
+      if (submitted) { stopTimer(); return; }
+      if (secondsLeft <= 0) {
+        submitPractice(true);
+        return;
+      }
+      secondsLeft--;
+      timerBadge.textContent = "Time: " + formatTime(secondsLeft);
+    }, 1000);
+  }
+
+  function submitPractice(autoSubmit) {
+    if (submitted) return;
+    submitted = true;
+    stopTimer();
+    if (tabSwitchesEl) tabSwitchesEl.value = String(tabSwitches);
+    if (!autoSubmit) {
+      var ok = window.confirm("Submit practice test now and check result?");
+      if (!ok) {
+        submitted = false;
+        startTimer();
+        return;
+      }
+    }
+    practiceForm.submit();
+  }
+
+  // Load subjects into dropdown
+  fetch(subjectsUrl, { credentials:"same-origin", headers:{Accept:"application/json"} })
+    .then(function(r){ return r.json(); })
+    .then(function(subjects){
+      subjectSelect.innerHTML = '<option value="">— Select a subject —</option>';
+      subjects.forEach(function(s){
+        var o = document.createElement("option");
+        o.value = s.id; o.textContent = s.name;
+        subjectSelect.appendChild(o);
+      });
+    })
+    .catch(function(){
+      subjectSelect.innerHTML = '<option value="">Error loading subjects</option>';
+      showPickerMsg("Could not load subjects. Please refresh.");
+    });
+
+  subjectSelect.addEventListener("change", function(){
+    var sid = subjectSelect.value;
+    testSelect.innerHTML = '<option value="">Loading tests…</option>';
+    testSelect.disabled = true;
+    startBtn.disabled = true;
+    pickerMsg.classList.add("d-none");
+    if (!sid) { testSelect.innerHTML = '<option value="">Select a subject first</option>'; return; }
+
+    var url = testsUrlTemplate.replace("__SID__", sid);
+    fetch(url, { credentials:"same-origin", headers:{Accept:"application/json"} })
+      .then(function(r){ return r.json(); })
+      .then(function(tests){
+        testSelect.innerHTML = '<option value="">— Select a test —</option>';
+        if (!tests.length) {
+          testSelect.innerHTML = '<option value="">No tests available for this subject</option>';
+          return;
+        }
+        tests.forEach(function(t){
+          var o = document.createElement("option");
+          o.value = t.id; o.textContent = t.name;
+          testSelect.appendChild(o);
+        });
+        testSelect.disabled = false;
+        if (initialTestId && tests.some(function(t){ return String(t.id) === String(initialTestId); })) {
+          testSelect.value = initialTestId;
+          startBtn.disabled = false;
+          currentTestName = testSelect.options[testSelect.selectedIndex].textContent || "Practice Test";
+          testNameBadge.textContent = currentTestName;
+        }
+      })
+      .catch(function(){
+        testSelect.innerHTML = '<option value="">Error loading tests</option>';
+        showPickerMsg("Could not load tests. Try again.");
+      });
+  });
+
+  testSelect.addEventListener("change", function(){
+    startBtn.disabled = !testSelect.value;
+    if (testSelect.value) {
+      currentTestName = testSelect.options[testSelect.selectedIndex].textContent || "Practice Test";
+    }
+  });
+
+  startBtn.addEventListener("click", function(){
+    var tid = testSelect.value;
+    if (!tid) return;
+    currentTestId = tid;
+    currentTestName = testSelect.options[testSelect.selectedIndex].textContent || "Practice Test";
+    loadPractice(tid);
+  });
+
+  btnBackPicker.addEventListener("click", function(){
+    window.location.href = homeUrl;
+  });
+
+  btnSubmitPractice.addEventListener("click", function(){
+    submitPractice(false);
+  });
+
+  function loadPractice(tid) {
+    pickerSection.classList.add("d-none");
+    practiceSection.classList.remove("d-none");
+    practiceLoading.classList.remove("d-none");
+    practiceError.classList.add("d-none");
+    practiceArea.innerHTML = "";
+    submitted = false;
+    tabSwitches = 0;
+    if (btnSubmitPractice) btnSubmitPractice.disabled = false;
+    secondsLeft = 600;
+    timerBadge.textContent = "Time: 10:00";
+    testNameBadge.textContent = currentTestName || "Practice Test";
+    if (practiceTestIdEl) practiceTestIdEl.value = String(tid);
+    if (tabSwitchesEl) tabSwitchesEl.value = "0";
+    practiceForm.classList.add("d-none");
+
+    var url = apiQuestionsBase.replace("__TID__", String(tid));
+    var attemptsLeft = 3;
+    function doFetch() {
+      fetch(url, { credentials:"same-origin", headers:{Accept:"application/json"} })
+      .then(function(r){
+        return r.text().then(function(text){
+          var body = null;
+          try { body = text ? JSON.parse(text) : null; } catch(e){ body = {error:"Invalid response."}; }
+          return { ok:r.ok, status:r.status, body:body };
+        });
+      })
+      .then(function(res){
+        practiceLoading.classList.add("d-none");
+        if (!res.ok) {
+          practiceError.textContent = (res.body && res.body.error) ? res.body.error : ("Could not load questions. (" + res.status + ")");
+          practiceError.classList.remove("d-none");
+          return;
+        }
+        if (!Array.isArray(res.body) || !res.body.length) {
+          practiceError.textContent = "No questions found for this test.";
+          practiceError.classList.remove("d-none");
+          return;
+        }
+        renderPractice(res.body);
+      })
+      .catch(function(err){
+        attemptsLeft--;
+        if (attemptsLeft > 0) {
+          setTimeout(doFetch, (4 - attemptsLeft) * 400);
+          return;
+        }
+        practiceLoading.classList.add("d-none");
+        practiceError.textContent =
+          "Network error loading questions. " +
+          "Origin: " + window.location.origin + " " +
+          "URL: " + url + " " +
+          "Error: " + String(err && (err.message || err));
+        practiceError.classList.remove("d-none");
+      });
+    }
+    doFetch();
+  }
+
+  function renderPractice(questions) {
+    var totalCount = questions.length;
+    practiceArea.innerHTML = "";
+
+    questions.forEach(function(q, idx){
+      var qid = q.qid;
+      var card = document.createElement("div");
+      card.className = "card practice-q-card";
+      card.id = "pqcard-" + qid;
+
+      var opts = ["a","b","c","d"];
+      var optHtml = opts.map(function(v){
+        return '<label class="list-group-item list-group-item-action practice-option d-flex align-items-center gap-2 mb-0" id="opt-' + qid + '-' + v + '">' +
+          '<input class="form-check-input flex-shrink-0 mt-0" type="radio" name="q' + qid + '" value="' + v + '">' +
+          '<span><strong class="text-muted me-1">' + v.toUpperCase() + '.</strong>' + escapeHtml(q[v]) + '</span>' +
+        '</label>';
+      }).join("");
+
+      card.innerHTML =
+        '<div class="card-body p-3 p-md-4">' +
+          '<div class="d-flex justify-content-between align-items-center gap-2 mb-3">' +
+            '<span class="test-q-badge">Q ' + (idx+1) + '</span>' +
+            '<span class="small text-muted">' + (idx+1) + ' / ' + totalCount + '</span>' +
+          '</div>' +
+          '<p class="test-q-text mb-3">' + escapeHtml(q.que) + '</p>' +
+          '<input type="hidden" name="qno' + qid + '" value="' + qid + '">' +
+          '<div class="list-group list-group-flush rounded-3 border mb-3" id="optgroup-' + qid + '">' +
+            optHtml +
+          '</div>' +
+        '</div>';
+
+      practiceArea.appendChild(card);
+    });
+    practiceForm.classList.remove("d-none");
+    startTimer();
+  }
+
+  document.addEventListener("visibilitychange", function() {
+    if (document.hidden && !submitted && !practiceSection.classList.contains("d-none")) {
+      tabSwitches++;
+      if (tabSwitchesEl) tabSwitchesEl.value = String(tabSwitches);
+      if (tabSwitches >= maxTabSwitches) {
+        submitPractice(true);
+      }
+    }
+  });
+
+  if (initialTestId) {
+    pickerSection.classList.add("d-none");
+    practiceSection.classList.remove("d-none");
+    currentTestId = initialTestId;
+    currentTestName = "Practice Test";
+    loadPractice(initialTestId);
+  }
+})();
+</script>
+{% endblock %}

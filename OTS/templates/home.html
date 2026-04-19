@@ -1,0 +1,222 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title%} OTS - Candidate home page {% endblock %}
+{% block top%}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:testHistory' %}">History</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock%}
+
+{% block content%}
+
+<div class="container home-page px-2 px-sm-3 py-3 py-md-4">
+  <p class="text-center text-dark text-shadow-home mb-3 mb-md-4 fw-semibold lead">
+    Welcome, <span class="text-dark">{{ request.session.name }}</span>
+  </p>
+
+  <div class="card home-shell border-0 shadow-lg mx-auto">
+    <div class="card-header home-shell-header px-3 px-md-4 py-3">
+      <span class="fw-semibold">Choose your practice subject</span>
+      <span class="small d-block opacity-90 mt-1">Pick a subject, then start practice</span>
+    </div>
+    <div class="card-body px-2 px-sm-3 px-md-4 py-3 py-md-4">
+
+      <div id="home-message" class="alert alert-danger d-none mb-4" role="alert"></div>
+
+      <div id="subjects-section">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+          <h2 class="h5 fw-bold mb-0 home-section-title">Subjects</h2>
+        </div>
+        <div id="subjects-list" class="row row-cols-1 row-cols-sm-2 g-2 g-md-3">
+          <div class="col-12" id="subjects-loading-wrap">
+            <div class="card home-loading-card border-0 shadow-sm">
+              <div class="card-body text-center py-4">
+                <div class="spinner-border home-spinner mb-2" role="status"></div>
+                <p class="mb-0 text-muted small" id="subjects-loading">Loading subjects…</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tests-section" class="d-none mt-3 mt-md-4 pt-2 border-top home-inner-divider">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <h2 class="h5 fw-bold mb-0 home-section-title" id="tests-title">Practice Sets</h2>
+          <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" id="btn-back-subjects">
+            ← Subjects
+          </button>
+        </div>
+        <div id="tests-list" class="row row-cols-1 row-cols-sm-2 g-2 g-md-3"></div>
+      </div>
+
+      <div class="mt-3 mt-md-4 pt-3 border-top home-inner-divider text-center small text-muted">
+        Each session shows random 10 questions for practice.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var subjectsUrl = "{{ subjects_api_url|escapejs }}";
+  var testsUrlTemplate = "{{ tests_api_template|escapejs }}";
+  var practiceUrlTemplate = "{{ practice_url_template|escapejs }}";
+
+  var subjectsList = document.getElementById("subjects-list");
+  var subjectsLoadingWrap = document.getElementById("subjects-loading-wrap");
+  var subjectsSection = document.getElementById("subjects-section");
+  var testsSection = document.getElementById("tests-section");
+  var testsList = document.getElementById("tests-list");
+  var testsTitle = document.getElementById("tests-title");
+  var btnBack = document.getElementById("btn-back-subjects");
+  var homeMessage = document.getElementById("home-message");
+
+  function showMessage(text, kind) {
+    homeMessage.textContent = text;
+    homeMessage.classList.remove("d-none", "alert-info", "alert-danger", "alert-warning");
+    homeMessage.classList.add(kind || "alert-danger");
+  }
+
+  function hideMessage() {
+    homeMessage.classList.add("d-none");
+  }
+
+  function tileChevron() {
+    return '<span class="home-tile-chevron" aria-hidden="true">›</span>';
+  }
+
+  function renderSubjects(subjects) {
+    if (subjectsLoadingWrap) subjectsLoadingWrap.remove();
+    subjectsList.innerHTML = "";
+    if (!subjects.length) {
+      subjectsList.innerHTML = '<div class="col-12"><p class="text-muted mb-0">No subjects available yet.</p></div>';
+      return;
+    }
+    subjects.forEach(function (s) {
+      var col = document.createElement("div");
+      col.className = "col";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "card home-tile home-tile-subject h-100 border-0 text-start w-100";
+      btn.innerHTML =
+        '<div class="card-body d-flex align-items-center justify-content-between gap-3 py-3 px-3 px-md-4">' +
+          '<div class="min-w-0">' +
+            '<span class="home-tile-badge mb-2 d-inline-block">Subject</span>' +
+            '<div class="home-tile-title text-wrap">' + escapeHtml(s.name) + "</div>" +
+          "</div>" +
+          tileChevron() +
+        "</div>";
+      btn.addEventListener("click", function () {
+        loadTests(s.id, s.name);
+      });
+      col.appendChild(btn);
+      subjectsList.appendChild(col);
+    });
+  }
+
+  function escapeHtml(str) {
+    if (str == null) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function loadSubjects() {
+    hideMessage();
+    fetch(subjectsUrl, { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (r) {
+        if (!r.ok) throw new Error("bad");
+        return r.json();
+      })
+      .then(renderSubjects)
+      .catch(function () {
+        if (subjectsLoadingWrap) subjectsLoadingWrap.remove();
+        subjectsList.innerHTML = "";
+        showMessage("Could not load subjects. Please refresh the page.", "alert-danger");
+      });
+  }
+
+  function loadTests(subjectId, subjectName) {
+    hideMessage();
+    var url = testsUrlTemplate.replace("__SID__", String(subjectId));
+    testsList.innerHTML =
+      '<div class="col-12"><div class="card home-loading-card border-0 shadow-sm">' +
+      '<div class="card-body text-center py-3"><div class="spinner-border home-spinner spinner-border-sm"></div>' +
+      '<p class="small text-muted mb-0 mt-2">Loading practice sets…</p></div></div></div>';
+    testsSection.classList.remove("d-none");
+    subjectsSection.classList.add("d-none");
+    testsTitle.textContent = subjectName + " — Practice";
+
+    fetch(url, { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (r) {
+        if (r.status === 404) return { _notFound: true };
+        if (!r.ok) throw new Error("bad");
+        return r.json();
+      })
+      .then(function (tests) {
+        testsList.innerHTML = "";
+        if (tests && tests._notFound) {
+          showMessage("Subject not found.", "alert-warning");
+          testsList.innerHTML = '<div class="col-12"><p class="text-muted mb-0">—</p></div>';
+          return;
+        }
+        if (!tests.length) {
+          testsList.innerHTML = '<div class="col-12"><p class="text-muted mb-0">No practice set for this subject yet.</p></div>';
+          return;
+        }
+        tests.forEach(function (t) {
+          var col = document.createElement("div");
+          col.className = "col";
+          var a = document.createElement("a");
+          a.href = practiceUrlTemplate.replace("__TID__", encodeURIComponent(t.id));
+          a.className = "card home-tile home-tile-test h-100 border-0 text-decoration-none";
+          a.innerHTML =
+            '<div class="card-body d-flex align-items-center justify-content-between gap-3 py-3 px-3 px-md-4">' +
+              '<div class="min-w-0">' +
+                '<span class="home-tile-badge home-tile-badge-test mb-2 d-inline-block">Practice</span>' +
+                '<div class="home-tile-title text-wrap text-dark">' + escapeHtml(t.name) + "</div>" +
+                '<div class="small text-muted mt-1">10 random questions</div>' +
+              "</div>" +
+              '<span class="home-tile-go text-success fw-bold">Start Practice ›</span>' +
+            "</div>";
+          col.appendChild(a);
+          testsList.appendChild(col);
+        });
+      })
+      .catch(function () {
+        testsList.innerHTML = "";
+        showMessage("Could not load tests. Try again.", "alert-danger");
+      });
+  }
+
+  btnBack.addEventListener("click", function () {
+    testsSection.classList.add("d-none");
+    subjectsSection.classList.remove("d-none");
+    hideMessage();
+  });
+
+  loadSubjects();
+})();
+</script>
+
+{% endblock%}
+

@@ -1,0 +1,79 @@
+{% extends 'main.html' %}
+
+{% block title%} OTS - Candidate Result history {% endblock %}
+{% block top%}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:home' %}">Home</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock%}
+
+{% block content%}
+<div class="container mt-3 mt-md-5 px-2 px-md-3"
+     style="max-height: 75vh; overflow-y: auto; scrollbar-width: none;">
+
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body text-center py-3 py-md-4 px-2 px-md-4">
+      <h1 class="fw-bold mb-3 fs-2 fs-md-1" style="color: rgb(30, 76, 99);">Your Report Card</h1>
+      <p class="fs-6 fs-md-5">
+        Hi <span class="fw-semibold text-success">{{ candidate.name }}</span>,<br>
+        You attempted <span class="fw-bold text-info">{{ candidate.testattemped }}</span> tests and scored
+        <span class="fw-bold text-warning">{{ candidate.points }}</span> on the scale of 10.
+      </p>
+    </div>
+  </div>
+
+  <div class="table-responsive mt-4 shadow-sm rounded-3">
+    <table class="table table-bordered table-striped table-hover align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th class="small-on-mobile">Date</th>
+          <th class="small-on-mobile">Time</th>
+          <th class="small-on-mobile">Attempt</th>
+          <th class="small-on-mobile">Right</th>
+          <th class="small-on-mobile">Wrong</th>
+          <th class="small-on-mobile">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in result %}
+        <tr>
+          <td class="small-on-mobile">{{ r.date }}</td>
+          <td class="small-on-mobile">{{ r.time }}</td>
+          <td class="small-on-mobile">{{ r.attempt }}</td>
+          <td class="text-success fw-bold small-on-mobile">{{ r.right }}</td>
+          <td class="text-danger fw-bold small-on-mobile">{{ r.wrong }}</td>
+          <td class="fw-semibold small-on-mobile">{{ r.points }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  @media (max-width: 576px) {
+    .small-on-mobile {
+      font-size: 0.78rem;
+      padding: 0.35rem 0.4rem;
+      white-space: nowrap;
+    }
+  }
+</style>
+{% endblock%}
+

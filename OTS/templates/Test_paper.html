@@ -1,0 +1,419 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %} OTS - Test Paper {% endblock %}
+{% block top %}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4 align-items-center">
+        <li class="nav-item me-2 me-md-4">
+          <span id="nav-timer" class="badge fs-6 px-3 py-2"
+                style="background:rgba(255,255,255,0.15);color:#fff;letter-spacing:2px;font-family:monospace;">
+            ⏱ --:--
+          </span>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" href="{% url 'OTS:Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!-- Tab-switch warning overlay -->
+<div id="cheat-overlay"
+     style="display:none;position:fixed;inset:0;background:rgba(20,0,0,0.93);z-index:9999;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="background:#fff;border-radius:1rem;padding:2rem 1.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
+    <h3 class="fw-bold text-danger mb-3">Tab Switch Detected!</h3>
+    <p class="mb-3">You left the test window <span id="cheat-count" class="fw-bold text-danger">1</span> time(s).<br>
+    <strong>3 switches will auto-submit your test.</strong></p>
+    <button onclick="closeCheatWarning()" class="btn btn-danger px-5 py-2 fw-semibold">Return to Test</button>
+  </div>
+</div>
+
+<!-- Question Navigator Sidebar -->
+<div class="container-fluid test-outer-wrap px-2 px-md-3 mt-2 mt-md-3">
+  <div class="row g-3 justify-content-center">
+
+    <!-- Navigator panel -->
+    <div class="col-12 col-lg-3 order-2 order-lg-1">
+      <div class="card border-0 shadow test-nav-card sticky-top" style="top:80px;">
+        <div class="card-header test-nav-header d-flex align-items-center justify-content-between">
+          <span class="fw-semibold">Navigator</span>
+          <span id="nav-answered" class="badge" style="background:rgba(255,255,255,0.25);">0 / 0</span>
+        </div>
+        <div class="card-body p-2">
+          <div id="question-nav-grid" class="d-flex flex-wrap gap-1 justify-content-center"></div>
+          <div class="mt-3 pt-2 border-top small">
+            <span class="me-2"><span class="nav-dot nav-dot-answered"></span> Answered</span>
+            <span><span class="nav-dot nav-dot-unanswered"></span> Not answered</span>
+          </div>
+        </div>
+        <!-- Big timer -->
+        <div class="card-footer text-center py-3" style="background:rgba(30,76,99,0.07);border:none;">
+          <div id="big-timer" class="fw-bold"
+               style="font-family:monospace;font-size:clamp(1.4rem,4vw,2rem);color:rgb(30,76,99);letter-spacing:3px;">
+            30:00
+          </div>
+          <div class="small text-muted mt-1">Time remaining</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main test area -->
+    <div class="col-12 col-lg-8 order-1 order-lg-2">
+      <div class="mb-2">
+        <a href="{% url 'OTS:home' %}" class="btn btn-outline-light border-secondary text-dark btn-sm shadow-sm">← Home</a>
+      </div>
+
+      <div id="test-loading" class="card test-loading-panel border-0 shadow">
+        <div class="card-body text-center py-5 px-3 px-md-4">
+          <div class="spinner-border mb-3" style="color:rgb(30,76,99);" role="status">
+            <span class="visually-hidden">Loading…</span>
+          </div>
+          <p class="mb-0 fw-semibold text-secondary">Loading questions…</p>
+          <p class="small text-muted mt-2 mb-0">Please wait</p>
+        </div>
+      </div>
+
+      <div id="test-error" class="alert alert-danger d-none shadow-sm" role="alert"></div>
+
+      <form id="test-form" action="{% url 'OTS:calculateTest' %}" method="post" class="d-none">
+        {% csrf_token %}
+        <input type="hidden" name="test_id" value="{{ test_id }}">
+        <input type="hidden" name="tab_switches" id="hidden-tab-switches" value="0">
+        <input type="hidden" name="copy_attempts" id="hidden-copy-attempts" value="0">
+        <input type="hidden" name="fullscreen_exits" id="hidden-fullscreen-exits" value="0">
+        <div class="card test-paper-shell border-0 shadow-lg">
+          <div class="card-header test-paper-header py-3 px-3 px-md-4 d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <span class="fw-semibold">Test Paper</span>
+            <span id="test-progress" class="badge rounded-pill test-progress-badge"></span>
+          </div>
+          <div class="test-questions-scroll px-2 px-md-4 py-3" id="questions-area"></div>
+          <div class="test-submit-bar text-center px-2 px-md-4">
+            <div id="unanswered-warning" class="alert alert-warning d-none small mb-3">
+              ⚠️ You have <span id="unanswered-count"></span> unanswered question(s). You can still submit, but unanswered questions count as wrong.
+            </div>
+            <button type="button" onclick="confirmSubmit()"
+                    class="btn btn-success btn-lg px-4 px-md-5 w-100 w-md-auto shadow">
+              Submit Answers
+            </button>
+            <p class="small text-muted mb-0 mt-3">Review all questions before you submit.</p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Submit Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header" style="background:rgb(30,76,99);color:#fff;">
+        <h5 class="modal-title fw-bold">Submit Test?</h5>
+      </div>
+      <div class="modal-body" id="submit-modal-body">
+        Are you sure you want to submit?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Review More</button>
+        <button type="button" class="btn btn-success fw-semibold px-4" onclick="doSubmit()">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Time's Up Modal -->
+<div class="modal fade" id="timesupModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-body py-5">
+        <div style="font-size:3rem;">⏰</div>
+        <h3 class="fw-bold mt-3">Time's Up!</h3>
+        <p class="text-muted">Your test is being submitted automatically…</p>
+        <div class="spinner-border text-success mt-2" role="status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.test-outer-wrap { padding-bottom: 3rem; }
+.test-nav-card { border-radius: 1rem !important; overflow: hidden; }
+.test-nav-header { background: rgb(30,76,99) !important; color: #fff !important; border-bottom: none; }
+.nav-dot { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:middle; margin-right:3px; }
+.nav-dot-answered { background: #198754; }
+.nav-dot-unanswered { background: #dee2e6; border: 1px solid #aaa; }
+.q-nav-btn { width:36px; height:36px; border-radius:8px; border:2px solid #dee2e6; background:#fff; font-size:.8rem; font-weight:700; cursor:pointer; transition:all .15s; }
+.q-nav-btn.answered { background: #198754; border-color:#198754; color:#fff; }
+.q-nav-btn.current { border-color: rgb(30,76,99); box-shadow: 0 0 0 2px rgba(30,76,99,.3); }
+.q-nav-btn:hover { transform:scale(1.1); }
+#big-timer.warning { color: #dc3545 !important; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+@media (min-width: 768px) {
+  .w-md-auto { width: auto !important; }
+}
+
+@media (max-width: 991px) {
+  /* Navigator moves above questions on mobile/tablet — reduce its sticky height */
+  .test-nav-card.sticky-top { position: relative !important; top: auto !important; }
+}
+
+@media (max-width: 575px) {
+  #nav-timer {
+    font-size: 0.78rem !important;
+    letter-spacing: 1px;
+    padding: 0.25rem 0.6rem !important;
+  }
+}
+</style>
+
+<script>
+(function () {
+  var questionsUrl = "{{ questions_api_url|escapejs }}";
+  var homeUrl = "{% url 'OTS:home' %}";
+  var TIMER_MINUTES = {{ duration_minutes|default:30 }};
+
+  var loadingEl = document.getElementById("test-loading");
+  var errorEl = document.getElementById("test-error");
+  var formEl = document.getElementById("test-form");
+  var areaEl = document.getElementById("questions-area");
+  var progressEl = document.getElementById("test-progress");
+  var navGrid = document.getElementById("question-nav-grid");
+  var navAnswered = document.getElementById("nav-answered");
+  var bigTimer = document.getElementById("big-timer");
+  var navTimer = document.getElementById("nav-timer");
+
+  var totalQuestions = 0;
+  var answeredSet = {};
+  var timerInterval = null;
+  var secondsLeft = TIMER_MINUTES * 60;
+  var submitted = false;
+  var cheatCount = 0;
+  var MAX_CHEATS = 3;
+  var submitModal = null;
+  var timesupModal = null;
+
+  function escapeHtml(str) {
+    if (str == null) return "";
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function hideLoading() { if (loadingEl) loadingEl.classList.add("d-none"); }
+
+  function showError(msg) {
+    hideLoading();
+    errorEl.innerHTML = "";
+    var span = document.createElement("span"); span.textContent = msg;
+    errorEl.appendChild(span);
+    var p = document.createElement("p"); p.className = "mb-0 mt-3";
+    var a = document.createElement("a"); a.href = homeUrl; a.className = "btn btn-dark btn-sm"; a.textContent = "Back to home";
+    p.appendChild(a); errorEl.appendChild(p);
+    errorEl.classList.remove("d-none");
+  }
+
+  function formatTime(secs) {
+    var m = Math.floor(secs / 60), s = secs % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function updateTimer() {
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      autoSubmit();
+      return;
+    }
+    secondsLeft--;
+    var fmt = formatTime(secondsLeft);
+    bigTimer.textContent = fmt;
+    navTimer.textContent = "⏱ " + fmt;
+    if (secondsLeft <= 300) {
+      bigTimer.classList.add("warning");
+      navTimer.style.background = "rgba(220,53,69,0.35)";
+    }
+  }
+
+  function startTimer() {
+    bigTimer.textContent = formatTime(secondsLeft);
+    navTimer.textContent = "⏱ " + formatTime(secondsLeft);
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function updateNavBtn(qid, answered) {
+    var btn = document.getElementById("navbtn-" + qid);
+    if (!btn) return;
+    if (answered) btn.classList.add("answered"); else btn.classList.remove("answered");
+    var count = Object.keys(answeredSet).filter(function(k){return answeredSet[k];}).length;
+    navAnswered.textContent = count + " / " + totalQuestions;
+  }
+
+  function scrollToQuestion(index) {
+    var cards = areaEl.querySelectorAll(".test-question-card");
+    if (cards[index]) { cards[index].scrollIntoView({behavior:"smooth", block:"start"}); }
+    document.querySelectorAll(".q-nav-btn").forEach(function(b,i){
+      if(i===index) b.classList.add("current"); else b.classList.remove("current");
+    });
+  }
+
+  function renderQuestions(questions) {
+    totalQuestions = questions.length;
+    progressEl.textContent = totalQuestions + " questions";
+    areaEl.innerHTML = "";
+    navGrid.innerHTML = "";
+
+    questions.forEach(function (question, index) {
+      var qid = question.qid;
+      answeredSet[qid] = false;
+
+      var navBtn = document.createElement("button");
+      navBtn.type = "button";
+      navBtn.id = "navbtn-" + qid;
+      navBtn.className = "q-nav-btn" + (index === 0 ? " current" : "");
+      navBtn.textContent = index + 1;
+      navBtn.title = "Question " + (index + 1);
+      navBtn.addEventListener("click", function() { scrollToQuestion(index); });
+      navGrid.appendChild(navBtn);
+
+      var card = document.createElement("div");
+      card.className = "card test-question-card mb-3 border-0";
+      card.id = "qcard-" + qid;
+
+      var opts = ["a","b","c","d"];
+      var optLabels = {"a": question.a, "b": question.b, "c": question.c, "d": question.d};
+      var optionsHtml = opts.map(function(v) {
+        return '<label class="list-group-item list-group-item-action test-option d-flex align-items-center gap-2 mb-0">' +
+          '<input class="form-check-input flex-shrink-0 mt-0" type="radio" name="q' + qid + '" value="' + v + '">' +
+          '<span><strong class="text-muted me-1">' + v.toUpperCase() + '.</strong>' + escapeHtml(optLabels[v]) + '</span>' +
+          '</label>';
+      }).join("");
+
+      card.innerHTML =
+        '<div class="card-body p-3 p-md-4">' +
+          '<div class="d-flex justify-content-between align-items-center gap-2 mb-3">' +
+            '<span class="test-q-badge">Q ' + (index + 1) + '</span>' +
+            '<span class="small text-muted">' + (index + 1) + " / " + totalQuestions + '</span>' +
+          '</div>' +
+          '<p class="test-q-text mb-3">' + escapeHtml(question.que) + '</p>' +
+          '<input type="hidden" name="qno' + qid + '" value="' + qid + '">' +
+          '<div class="list-group list-group-flush rounded-3 border">' + optionsHtml + '</div>' +
+        '</div>';
+
+      card.querySelectorAll('input[type=radio]').forEach(function(radio) {
+        radio.addEventListener("change", function() {
+          answeredSet[qid] = true;
+          updateNavBtn(qid, true);
+        });
+      });
+
+      areaEl.appendChild(card);
+    });
+
+    navAnswered.textContent = "0 / " + totalQuestions;
+    formEl.classList.remove("d-none");
+    startTimer();
+
+    submitModal = new bootstrap.Modal(document.getElementById("submitModal"));
+    timesupModal = new bootstrap.Modal(document.getElementById("timesupModal"));
+  }
+
+  function autoSubmit() {
+    if (submitted) return;
+    submitted = true;
+    clearInterval(timerInterval);
+    if (timesupModal) timesupModal.show();
+    setTimeout(function() { formEl.submit(); }, 2000);
+  }
+
+  document.addEventListener("visibilitychange", function() {
+    if (submitted) return;
+    if (document.hidden) {
+      cheatCount++;
+      document.getElementById("cheat-count").textContent = cheatCount;
+      document.getElementById("cheat-overlay").style.display = "flex";
+      document.getElementById("hidden-tab-switches").value = cheatCount;
+      if (cheatCount >= MAX_CHEATS) {
+        setTimeout(function() { autoSubmit(); }, 1500);
+      }
+    }
+  });
+
+  document.addEventListener("copy", function() {
+    var el = document.getElementById("hidden-copy-attempts");
+    el.value = parseInt(el.value || 0) + 1;
+  });
+
+  document.addEventListener("fullscreenchange", function() {
+    if (!document.fullscreenElement) {
+      var el = document.getElementById("hidden-fullscreen-exits");
+      el.value = parseInt(el.value || 0) + 1;
+    }
+  });
+
+  window.closeCheatWarning = function() {
+    if (cheatCount < MAX_CHEATS) {
+      document.getElementById("cheat-overlay").style.display = "none";
+    }
+  };
+
+  window.confirmSubmit = function() {
+    var answered = Object.keys(answeredSet).filter(function(k){return answeredSet[k];}).length;
+    var unanswered = totalQuestions - answered;
+    var bodyEl = document.getElementById("submit-modal-body");
+    if (unanswered > 0) {
+      bodyEl.innerHTML = '<div class="alert alert-warning mb-2"><strong>' + unanswered + ' question(s) unanswered.</strong><br>Unanswered questions count as wrong. Continue?</div>';
+    } else {
+      bodyEl.innerHTML = '<div class="text-success fw-semibold">✅ All ' + totalQuestions + ' questions answered!</div><p class="mt-2 mb-0">Ready to submit your test?</p>';
+    }
+    submitModal.show();
+  };
+
+  window.doSubmit = function() {
+    if (submitted) return;
+    submitted = true;
+    clearInterval(timerInterval);
+    formEl.submit();
+  };
+
+  window.history.pushState(null, null, window.location.href);
+  window.addEventListener("popstate", function() {
+    window.history.pushState(null, null, window.location.href);
+  });
+
+  fetch(questionsUrl, { credentials: "same-origin", headers: { Accept: "application/json" } })
+    .then(function(r) {
+      return r.text().then(function(text) {
+        var body = null;
+        try { body = text ? JSON.parse(text) : null; } catch(e) { body = { error: "Invalid response." }; }
+        return { ok: r.ok, status: r.status, body: body };
+      });
+    })
+    .then(function(res) {
+      hideLoading();
+      if (!res.ok) {
+        showError((res.body && res.body.error) ? res.body.error : "Could not load this test.");
+        return;
+      }
+      if (!Array.isArray(res.body) || res.body.length === 0) {
+        showError("No questions were returned.");
+        return;
+      }
+      renderQuestions(res.body);
+    })
+    .catch(function() {
+      hideLoading();
+      showError("Network error. Refresh the page and try again.");
+    });
+})();
+</script>
+{% endblock %}

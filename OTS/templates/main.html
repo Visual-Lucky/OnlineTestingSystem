@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+</head>
+<body>
+    <div class="site-wrap">
+        <div id="main">
+            <div class="top">
+                <div class="menu">
+                    {% block top %}{% endblock %}
+                </div>
+            </div>
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+        <footer class="site-footer bg-dark text-light py-3 mt-auto">
+            <div class="container d-flex justify-content-between align-items-center flex-wrap gap-3 px-3 px-md-4">
+                <div class="text-start text-sm-start footer-col">
+                    <h6 class="fw-bold mb-1">Online Testing System</h6>
+                    <p class="small mb-0">
+                        A secure and user-friendly platform where users can register to take tests,
+                        view results instantly, and track their performance history.
+                    </p>
+                </div>
+                <div class="text-start text-sm-end footer-col">
+                    <p class="small mb-0">
+                        © Online Testing System. All rights reserved. <br>
+                        Crafted with ❤️ by <span class="fw-semibold">Rohit, Mohit, Prateek &amp; Monu</span>
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <style>
+        .footer-col {
+            max-width: 100%;
+        }
+
+        @media (min-width: 576px) {
+            .footer-col {
+                max-width: 50%;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .site-footer .container {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
+

@@ -1,0 +1,34 @@
+[
+  {
+    "subject": "General Knowledge",
+    "test": "GK Basic Test",
+    "questions": [
+      {"question": "What is the capital of India?", "options": ["Mumbai", "Kolkata", "New Delhi", "Chennai"], "answer": "c"},
+      {"question": "Which planet is closest to the Sun?", "options": ["Venus", "Mercury", "Earth", "Mars"], "answer": "b"},
+      {"question": "How many days are in a leap year?", "options": ["365", "364", "366", "360"], "answer": "c"},
+      {"question": "Who wrote the national anthem of India?", "options": ["Bankim Chandra", "Rabindranath Tagore", "Mahatma Gandhi", "Jawaharlal Nehru"], "answer": "b"},
+      {"question": "What is the largest ocean on Earth?", "options": ["Atlantic", "Indian", "Arctic", "Pacific"], "answer": "d"},
+      {"question": "How many continents are there on Earth?", "options": ["5", "6", "7", "8"], "answer": "c"},
+      {"question": "Which gas do plants absorb from the atmosphere?", "options": ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], "answer": "c"},
+      {"question": "What is the speed of light (approx)?", "options": ["3 lakh km/s", "1 lakh km/s", "5 lakh km/s", "10 lakh km/s"], "answer": "a"},
+      {"question": "Which is the smallest state in India by area?", "options": ["Sikkim", "Goa", "Tripura", "Manipur"], "answer": "b"},
+      {"question": "In which year did India gain independence?", "options": ["1945", "1946", "1947", "1948"], "answer": "c"}
+    ]
+  },
+  {
+    "subject": "Mathematics",
+    "test": "Basic Arithmetic",
+    "questions": [
+      {"question": "What is 15 × 8?", "options": ["110", "120", "130", "115"], "answer": "b"},
+      {"question": "What is √144?", "options": ["11", "12", "13", "14"], "answer": "b"},
+      {"question": "What is 25% of 200?", "options": ["40", "50", "60", "55"], "answer": "b"},
+      {"question": "What is the value of π (pi) approximately?", "options": ["3.14", "3.41", "3.12", "3.16"], "answer": "a"},
+      {"question": "What is 2⁸?", "options": ["128", "256", "512", "64"], "answer": "b"},
+      {"question": "Solve: 3x + 6 = 21. What is x?", "options": ["3", "4", "5", "6"], "answer": "c"},
+      {"question": "What is the LCM of 4 and 6?", "options": ["12", "24", "6", "8"], "answer": "a"},
+      {"question": "A triangle has angles 60°, 70°. What is the third angle?", "options": ["40°", "50°", "60°", "70°"], "answer": "b"},
+      {"question": "What is 1000 ÷ 25?", "options": ["35", "40", "45", "50"], "answer": "b"},
+      {"question": "What is the area of a circle with radius 7 (use π = 22/7)?", "options": ["154", "144", "164", "174"], "answer": "a"}
+    ]
+  }
+]

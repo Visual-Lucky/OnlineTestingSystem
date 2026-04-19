@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title%}OTS - Registration Status{% endblock %}
+{% block top%}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:RegistrationForm' %}">Signup</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:Loginform' %}">Login</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock%}
+
+{% block content %}
+<div class="container py-4 py-md-5 px-3 px-md-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+
+      {% if userStatus == 1 %}
+      <div id="contant-message">
+        <div class="card mb-5 border-0 shadow-sm rounded-4 overflow-hidden">
+          <img src="{% static 'images/saftey.jpg' %}" class="card-img-top" alt="img"
+               style="max-height: 220px; object-fit: cover;">
+          <div class="card-body px-3 px-md-4 py-4">
+            <h3 class="card-title text-center fw-bold">Message</h3>
+            <h5 class="mt-3">Sorry, username already exists. Please try a different username.</h5>
+            <a href="{% url 'OTS:RegistrationForm' %}" class="d-inline-block mt-3">Back to candidate Registration</a>
+          </div>
+        </div>
+      </div>
+
+      {% elif userStatus == 2 %}
+      <div id="contant-message">
+        <div class="card mb-5 border-0 shadow-sm rounded-4 overflow-hidden">
+          <img src="{% static 'images/saftey.jpg' %}" class="card-img-top" alt="img"
+               style="max-height: 220px; object-fit: cover;">
+          <div class="card-body px-3 px-md-4 py-4">
+            <h3 class="card-title text-center fw-bold">Message</h3>
+            <h5 class="mt-3">Congratulations!! User created successfully.</h5>
+            <a href="{% url 'OTS:Loginform' %}" class="d-inline-block mt-3">Login</a>
+          </div>
+        </div>
+      </div>
+
+      {% elif userStatus == 3 %}
+      <div id="contant-message">
+        <div class="card mb-5 border-0 shadow-sm rounded-4 overflow-hidden">
+          <img src="{% static 'images/saftey.jpg' %}" class="card-img-top" alt="img"
+               style="max-height: 220px; object-fit: cover;">
+          <div class="card-body px-3 px-md-4 py-4">
+            <h3 class="card-title text-center fw-bold">Message</h3>
+            <h5 class="mt-3">Oops! Improper Request.</h5>
+            <a href="{% url 'OTS:RegistrationForm' %}" class="d-inline-block mt-3">Back to candidate Registration</a>
+          </div>
+        </div>
+      </div>
+
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

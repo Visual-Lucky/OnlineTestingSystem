@@ -1,0 +1,583 @@
+[
+  {
+    "subject": "DSA",
+    "test": "DSA Test 1",
+    "questions": [
+      {
+        "question": "Which principle does a stack data structure follow?",
+        "options": ["FIFO", "LIFO", "Random access", "Priority order"],
+        "answer": "b"
+      },
+      {
+        "question": "Which data structure is typically used for BFS on a graph?",
+        "options": ["Stack", "Queue", "Trie", "Segment tree"],
+        "answer": "b"
+      },
+      {
+        "question": "Worst-case time complexity of quicksort when pivots are chosen poorly is:",
+        "options": ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"],
+        "answer": "c"
+      },
+      {
+        "question": "Inserting a node at the head of a singly linked list takes time:",
+        "options": ["O(n)", "O(1)", "O(log n)", "O(n^2)"],
+        "answer": "b"
+      },
+      {
+        "question": "Average-case lookup in a well-implemented hash table is usually:",
+        "options": ["O(n)", "O(1)", "O(n log n)", "O(log log n)"],
+        "answer": "b"
+      },
+      {
+        "question": "Which property holds for keys in a binary search tree (BST)?",
+        "options": [
+          "All leaves store the same key",
+          "Every left subtree key < root key < every right subtree key",
+          "Only leaf nodes can be deleted",
+          "Tree height is always log n"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Topological ordering exists for which graphs?",
+        "options": [
+          "Any undirected graph",
+          "Directed acyclic graphs (DAG)",
+          "Complete graphs only",
+          "Disconnected graphs only"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Tree height is commonly defined as:",
+        "options": [
+          "Number of nodes on the longest root-to-leaf path",
+          "Only the number of leaves",
+          "Number of edges in the whole tree",
+          "Depth of the shallowest leaf only"
+        ],
+        "answer": "a"
+      },
+      {
+        "question": "Which minimum spanning tree algorithm grows the tree using a key edge from a cut?",
+        "options": ["Bellman–Ford", "Kruskal (sorting edges)", "Prim", "Floyd–Warshall"],
+        "answer": "c"
+      },
+      {
+        "question": "Dynamic programming helps when problems have:",
+        "options": [
+          "Overlapping subproblems and optimal substructure",
+          "Only cyclic graphs",
+          "Only unsorted input",
+          "Only O(1) memory constraints"
+        ],
+        "answer": "a"
+      },
+      {
+        "question": "Space for an adjacency matrix of a graph with V vertices is:",
+        "options": ["O(V)", "O(V + E)", "O(V^2)", "O(E^2)"],
+        "answer": "c"
+      },
+      {
+        "question": "In a binary tree, which traversal visits the root between its left and right subtrees?",
+        "options": ["Preorder", "Inorder", "Postorder", "Reverse preorder"],
+        "answer": "b"
+      },
+      {
+        "question": "In a circular linked list, the last node’s next pointer points to:",
+        "options": ["Null", "The head node", "The middle node", "A random node"],
+        "answer": "b"
+      },
+      {
+        "question": "Searching in an unbalanced BST with n nodes can take, in the worst case:",
+        "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+        "answer": "c"
+      }
+    ]
+  },
+  {
+    "subject": "DBMS",
+    "test": "DBMS Test 1",
+    "questions": [
+      {
+        "question": "In ACID, which property ensures a transaction moves the database between valid states?",
+        "options": ["Atomicity", "Consistency", "Isolation", "Durability"],
+        "answer": "b"
+      },
+      {
+        "question": "A foreign key must reference which kind of column in another table?",
+        "options": [
+          "Any non-null column",
+          "Typically a primary key or uniquely constrained column",
+          "Only VARCHAR columns",
+          "Only columns without indexes"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Second Normal Form (2NF) removes partial dependency of non-prime attributes on:",
+        "options": ["The whole candidate key", "Any subset of a composite key", "Only foreign keys", "Only nullable columns"],
+        "answer": "b"
+      },
+      {
+        "question": "Which SQL command is used to read rows from tables?",
+        "options": ["INSERT", "UPDATE", "SELECT", "COMMIT"],
+        "answer": "c"
+      },
+      {
+        "question": "Durability in transactions means:",
+        "options": [
+          "All operations succeed or fail together",
+          "Committed updates survive crashes and restarts",
+          "Concurrent runs never interleave",
+          "Schema cannot include NULL"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Which join returns only matching rows from both tables?",
+        "options": ["LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "CROSS JOIN"],
+        "answer": "c"
+      },
+      {
+        "question": "A B-tree index on a column mainly improves:",
+        "options": ["Bulk delete speed always", "Point and range lookup cost", "Number of tables", "Network latency"],
+        "answer": "b"
+      },
+      {
+        "question": "In SQL, NULL usually indicates:",
+        "options": ["Zero", "Empty string ''", "Unknown or not applicable", "Boolean false"],
+        "answer": "c"
+      },
+      {
+        "question": "Which statement is a DDL example?",
+        "options": ["DELETE", "UPDATE", "CREATE TABLE", "INSERT"],
+        "answer": "c"
+      },
+      {
+        "question": "In ER diagrams a relationship set is drawn as a:",
+        "options": ["Rectangle", "Diamond", "Ellipse", "Cylinder"],
+        "answer": "b"
+      },
+      {
+        "question": "A decomposition is lossless if:",
+        "options": [
+          "No null values exist",
+          "Natural join of fragments recovers the original relation",
+          "Every table is in 1NF only",
+          "Only two tables are allowed"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Deadlock in a database often happens when transactions:",
+        "options": [
+          "Use too many indexes",
+          "Wait in a circular chain for locks",
+          "Run SELECT *",
+          "Use VARCHAR instead of CHAR"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "A candidate key is best described as:",
+        "options": [
+          "Always identical to primary key",
+          "A minimal superkey",
+          "Any indexed column",
+          "A synonym for foreign key"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "A SQL VIEW is typically:",
+        "options": [
+          "A separate physical copy updated nightly",
+          "A stored query that behaves like a virtual table",
+          "The transaction log",
+          "A backup file"
+        ],
+        "answer": "b"
+      }
+    ]
+  },
+  {
+    "subject": "Operating Systems",
+    "test": "Operating Systems Test 1",
+    "questions": [
+      {
+        "question": "A CPU mode bit is used to distinguish:",
+        "options": [
+          "RAM from ROM",
+          "Kernel (privileged) mode from user mode",
+          "SSD from HDD",
+          "IPv4 from IPv6"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Compared with processes, threads in the same process usually:",
+        "options": [
+          "Each have a separate address space",
+          "Share the code and data segments of the process",
+          "Cannot run in parallel on multicore CPUs",
+          "Do not need a program counter"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Which condition is NOT required in the classical deadlock model?",
+        "options": ["Mutual exclusion", "Hold and wait", "Preemption of resources allowed", "Circular wait"],
+        "answer": "c"
+      },
+      {
+        "question": "LRU page replacement replaces the page that:",
+        "options": [
+          "Was loaded first (FIFO)",
+          "Has not been used for the longest time",
+          "Has the smallest size",
+          "Belongs to the kernel only"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "First-Come-First-Served (FCFS) CPU scheduling is:",
+        "options": ["Non-preemptive", "Always time-quantum based", "Only for real-time tasks", "Random"],
+        "answer": "a"
+      },
+      {
+        "question": "The critical section is where a process:",
+        "options": ["Only prints output", "Accesses shared resources that need mutual exclusion", "Always sleeps", "Loads the bootloader"],
+        "answer": "b"
+      },
+      {
+        "question": "Thrashing in virtual memory describes:",
+        "options": [
+          "Very high CPU cache hit ratio",
+          "Almost continuous paging with little useful computation",
+          "Disk being physically full",
+          "Only one runnable process"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "A counting semaphore can control:",
+        "options": [
+          "Only one boolean lock",
+          "Access to a pool of identical units of a resource",
+          "Encryption strength",
+          "Compiler optimization level"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Round-robin scheduling requires specifying:",
+        "options": [
+          "A fixed time quantum",
+          "Only static priorities forever",
+          "A minimum-stack depth",
+          "Only I/O-bound jobs"
+        ],
+        "answer": "a"
+      },
+      {
+        "question": "Internal fragmentation in paging is common in:",
+        "options": ["TLB entries", "The last frame assigned to a process", "Every exact fit only", "The kernel stack only"],
+        "answer": "b"
+      },
+      {
+        "question": "System calls provide:",
+        "options": [
+          "A safe interface for user programs to request OS services",
+          "Direct hardware access without OS",
+          "GPU shader compilation",
+          "File encryption keys only"
+        ],
+        "answer": "a"
+      },
+      {
+        "question": "The producer–consumer problem needs careful synchronization of:",
+        "options": ["The CPU clock", "A bounded buffer", "The keyboard interrupt only", "Page table walks"],
+        "answer": "b"
+      },
+      {
+        "question": "An inverted page table, per classical definition, has roughly:",
+        "options": [
+          "One entry per virtual page of every process",
+          "One entry per physical frame",
+          "Only TLB entries",
+          "One entry per sector on disk"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Belady’s anomaly (more frames but more faults) can occur with:",
+        "options": ["LRU", "Optimal replacement", "FIFO replacement", "Clock (second-chance) only"],
+        "answer": "c"
+      }
+    ]
+  },
+  {
+    "subject": "Computer Networks",
+    "test": "Computer Networks Test 1",
+    "questions": [
+      {
+        "question": "How many layers does the OSI reference model define?",
+        "options": ["4", "5", "7", "8"],
+        "answer": "c"
+      },
+      {
+        "question": "TCP is best described as:",
+        "options": [
+          "Connectionless and unreliable",
+          "Connection-oriented and provides reliable byte streams",
+          "Purely a datalink protocol",
+          "Only for DNS lookups"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "IP routers primarily operate at which OSI layer?",
+        "options": ["Physical", "Data link", "Network", "Transport"],
+        "answer": "c"
+      },
+      {
+        "question": "The default TCP port for plain HTTP is:",
+        "options": ["21", "25", "80", "443"],
+        "answer": "c"
+      },
+      {
+        "question": "DNS mainly translates:",
+        "options": ["MAC addresses to IPv4", "Human-readable names to IP addresses", "Ports to process IDs", "Emails to SMS"],
+        "answer": "b"
+      },
+      {
+        "question": "A subnet mask helps split an IP address into:",
+        "options": ["Encryption layers", "Network prefix and host identifier", "TCP segments only", "Wi-Fi channels only"],
+        "answer": "b"
+      },
+      {
+        "question": "CSMA/CD is classically associated with:",
+        "options": ["Bluetooth pairing", "Older shared-bus Ethernet", "BGP policy routing", "SMTP delivery"],
+        "answer": "b"
+      },
+      {
+        "question": "An IPv4 address contains:",
+        "options": ["16 bits", "32 bits", "64 bits", "128 bits"],
+        "answer": "b"
+      },
+      {
+        "question": "ARP resolves:",
+        "options": [
+          "IPv4 address to MAC address on a LAN",
+          "URL to IP for HTTPS",
+          "Email domain to MX",
+          "UDP port to PID"
+        ],
+        "answer": "a"
+      },
+      {
+        "question": "SMTP is primarily used to:",
+        "options": [
+          "Browse web pages",
+          "Push email toward/into mail servers",
+          "Resolve host names",
+          "Encrypt Wi-Fi frames"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "UDP is a reasonable choice when:",
+        "options": [
+          "Guaranteed delivery is mandatory for every packet",
+          "Low latency matters more than optional retransmissions",
+          "HTTP/1.1 requires it",
+          "Only routing protocols may run"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Network bandwidth usually refers to:",
+        "options": ["One-way propagation delay only", "Data rate capacity of the link or path", "Number of lost packets only", "OS scheduling quantum"],
+        "answer": "b"
+      },
+      {
+        "question": "NAT often lets many private hosts share:",
+        "options": ["One public IPv4 address", "Only IPv6 addresses", "MAC tables", "ARP caches globally"],
+        "answer": "a"
+      },
+      {
+        "question": "TCP’s three-way handshake is used to:",
+        "options": ["Teardown connections only", "Establish a connection", "Translate DNS", "Assign DHCP static leases"],
+        "answer": "b"
+      }
+    ]
+  },
+  {
+    "subject": "Aptitude",
+    "test": "Aptitude Test 1",
+    "questions": [
+      {
+        "question": "What is 15% of 240?",
+        "options": ["24", "30", "36", "48"],
+        "answer": "c"
+      },
+      {
+        "question": "Two numbers are in the ratio 3 : 5 and their sum is 72. The smaller number is:",
+        "options": ["27", "30", "36", "40"],
+        "answer": "a"
+      },
+      {
+        "question": "Simple interest on ₹2000 at 8% per annum for 2 years is:",
+        "options": ["₹240", "₹320", "₹360", "₹400"],
+        "answer": "b"
+      },
+      {
+        "question": "A 120 m train passes a pole at 36 km/h. Time taken (in seconds) is:",
+        "options": ["8", "10", "12", "15"],
+        "answer": "c"
+      },
+      {
+        "question": "The average of 18, 22, 26, and 30 is:",
+        "options": ["22", "23", "24", "25"],
+        "answer": "c"
+      },
+      {
+        "question": "If 3x − 7 = 14, then x equals:",
+        "options": ["5", "6", "7", "8"],
+        "answer": "c"
+      },
+      {
+        "question": "HCF of 24 and 36 is:",
+        "options": ["4", "6", "12", "18"],
+        "answer": "c"
+      },
+      {
+        "question": "Selling price for 25% profit on a cost price of ₹400 is:",
+        "options": ["₹450", "₹480", "₹500", "₹520"],
+        "answer": "c"
+      },
+      {
+        "question": "A finishes a job in 10 days; B in 15 days. Working together they need:",
+        "options": ["4 days", "5 days", "6 days", "8 days"],
+        "answer": "c"
+      },
+      {
+        "question": "Next term: 2, 6, 12, 20, 30, ?",
+        "options": ["38", "40", "42", "44"],
+        "answer": "c"
+      },
+      {
+        "question": "A 20% discount on a marked price of ₹800 gives selling price:",
+        "options": ["₹600", "₹620", "₹640", "₹660"],
+        "answer": "c"
+      },
+      {
+        "question": "√1156 equals:",
+        "options": ["32", "34", "36", "38"],
+        "answer": "b"
+      },
+      {
+        "question": "Number of ways to arrange 3 distinct books in a row is:",
+        "options": ["3", "6", "9", "12"],
+        "answer": "b"
+      },
+      {
+        "question": "If log₁₀(x) = 2, then x equals:",
+        "options": ["10", "50", "100", "1000"],
+        "answer": "c"
+      }
+    ]
+  },
+  {
+    "subject": "OOP",
+    "test": "OOP Test 1",
+    "questions": [
+      {
+        "question": "Bundling data with the methods that operate on it is called:",
+        "options": ["Abstraction", "Encapsulation", "Sharding", "Paging"],
+        "answer": "b"
+      },
+      {
+        "question": "Many classes responding differently to the same interface or message illustrates:",
+        "options": ["Compiling", "Polymorphism", "Endianness", "Thrashing"],
+        "answer": "b"
+      },
+      {
+        "question": "A child class reusing and extending behaviour of a parent class shows:",
+        "options": ["Only aggregation", "Inheritance", "Only recursion", "Deadlock"],
+        "answer": "b"
+      },
+      {
+        "question": "In Java, an abstract class cannot be:",
+        "options": ["Subclassed", "Extended", "Instantiated directly with new", "Given instance fields"],
+        "answer": "c"
+      },
+      {
+        "question": "Constructors run when:",
+        "options": ["The program exits", "An object is created", "Garbage runs only", "A static import loads"],
+        "answer": "b"
+      },
+      {
+        "question": "In instance methods, `this` (Java) / `this` pointer (C++) refers to:",
+        "options": ["The superclass object only", "The current object", "The OS kernel", "The package root"],
+        "answer": "b"
+      },
+      {
+        "question": "Method overloading is resolved at:",
+        "options": ["Runtime by JVM only guessing", "Compile time", "Link time on router", "Install time"],
+        "answer": "b"
+      },
+      {
+        "question": "A Java class may implement:",
+        "options": ["At most one interface", "Multiple interfaces", "No interfaces ever", "Only enums"],
+        "answer": "b"
+      },
+      {
+        "question": "In SOLID, Open/Closed Principle encourages classes that are:",
+        "options": [
+          "Open for modification of old code only",
+          "Open for extension but closed for risky modification of stable code",
+          "Closed for inheritance",
+          "Open only to friends"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "Composition (`has-a`) often preferred over deep inheritance trees because it:",
+        "options": [
+          "Removes need for objects",
+          "Builds behaviour by delegating to contained objects",
+          "Forbids interfaces",
+          "Requires global variables"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "A static method is associated mainly with:",
+        "options": ["A particular instance", "The class itself", "Heap arenas only", "Network packets"],
+        "answer": "b"
+      },
+      {
+        "question": "Java package-private (no modifier) visibility limits access to:",
+        "options": ["Only subclasses", "The same package", "Everywhere", "Only static context"],
+        "answer": "b"
+      },
+      {
+        "question": "Runtime polymorphism in Java is commonly through:",
+        "options": [
+          "Overloading only",
+          "Overriding with a superclass reference pointing to subclass objects",
+          "Final methods only",
+          "Primitive widening only"
+        ],
+        "answer": "b"
+      },
+      {
+        "question": "An `enum` in Java models:",
+        "options": ["Any floating value", "A fixed set of named constants", "A raw pointer", "A network socket"],
+        "answer": "b"
+      }
+    ]
+  }
+]

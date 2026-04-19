@@ -1,0 +1,69 @@
+{% extends 'main.html' %}
+
+{% block title%} OTS - Result page {% endblock %}
+{% block top%}
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid ps-3 ps-md-5 pe-3 pe-md-5">
+    <div class="fw-bold fs-3">Online Testing System</div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto mb-lg-2 px-4">
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:home' %}">Home</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link active text-white fs-5" aria-current="page" href="{% url 'OTS:Logout' %}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock%}
+
+{% block content%}
+<div class="container mt-3 mt-md-5 px-2 px-sm-3">
+
+  <h2 class="fw-bold text-center mb-3 mb-md-4 fs-3 fs-md-2">Your Test Result</h2>
+
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-bordered table-striped table-hover align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th class="small-on-mobile">Date</th>
+          <th class="small-on-mobile">Time</th>
+          <th class="small-on-mobile">Attempt</th>
+          <th class="small-on-mobile">Right</th>
+          <th class="small-on-mobile">Wrong</th>
+          <th class="small-on-mobile">Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in result %}
+        <tr>
+          <td class="small-on-mobile">{{ r.date }}</td>
+          <td class="small-on-mobile">{{ r.time }}</td>
+          <td class="small-on-mobile">{{ r.attempt }}</td>
+          <td class="text-success fw-bold small-on-mobile">{{ r.right }}</td>
+          <td class="text-danger fw-bold small-on-mobile">{{ r.wrong }}</td>
+          <td class="fw-semibold small-on-mobile">{{ r.points }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<style>
+  @media (max-width: 576px) {
+    .small-on-mobile {
+      font-size: 0.78rem;
+      padding: 0.35rem 0.4rem;
+      white-space: nowrap;
+    }
+  }
+</style>
+{% endblock%}
